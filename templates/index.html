@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Social Awareness Agent</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            margin: 0;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: white;
+        }
+
+        .container {
+            width: 50%;
+            margin: 60px auto;
+            background: white;
+            color: black;
+            padding: 25px;
+            border-radius: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 8px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #4facfe;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #00f2fe;
+        }
+
+        .card {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f4f4f4;
+            border-radius: 10px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .txt { background: green; }
+        .pdf { background: red; }
+
+        #loader {
+            display: none;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h2>AI Social Awareness Agent</h2>
+
+    <input type="text" id="topic" placeholder="Enter topic">
+
+    <button onclick="generate()">Generate Report</button>
+
+    <div id="loader">Generating AI Report...</div>
+
+    <div class="card" id="result" style="display:none;">
+        <h3>Report Ready</h3>
+        <p id="word"></p>
+
+        <div class="btn-group">
+            <button class="btn txt" id="txtBtn">Download TXT</button>
+            <button class="btn pdf" id="pdfBtn">Download PDF</button>
+        </div>
+
+        <h4>Preview</h4>
+        <p id="preview"></p>
+    </div>
+
+</div>
+<script>
+async function generate() {
+    document.getElementById("loader").style.display = "block";
+
+    const topic = document.getElementById("topic").value;
+
+    const res = await fetch("/generate", {
+        method: "POST",
+        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+        body: "topic=" + topic
+    });
+
+    const data = await res.json();
+
+    document.getElementById("loader").style.display = "none";
+    document.getElementById("result").style.display = "block";
+
+    document.getElementById("word").innerText = "Word Count: " + data.word_count;
+    document.getElementById("preview").innerText = data.preview;
+
+    document.getElementById("txtBtn").onclick = () => {
+        window.open("/" + data.text_report, "_blank");
+    };
+
+    document.getElementById("pdfBtn").onclick = () => {
+        window.open("/" + data.pdf_report, "_blank");
+    };
+}
+</script>
+
+</body>
+</html>
